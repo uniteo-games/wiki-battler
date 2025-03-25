@@ -19,16 +19,39 @@ TEXT = {
         "start_button": "バトル開始！",
         "input1": "Wikipedia URL 1",
         "input2": "Wikipedia URL 2",
-        # その他日本語文言
+        "hp": "体力",
+        "attack": "攻撃力",
+        "defense": "防御力",
+        "speed": "素早さ",
+        "insight": "読みの力",
+        "popularity": "人気度",
+        "battle_log": "戦闘ログ",
+        "winner": "🏆 勝者",
+        "start_battle": "⚡ 戦闘開始！",
+        "first_move": "⚡ 先手は：",
+        "victory": "🏅 勝者！",
+        "image_warning": "画像が表示できません"
     },
     "en": {
         "title": "Wikipedia Battler",
         "start_button": "Start Battle!",
         "input1": "Wikipedia URL 1",
         "input2": "Wikipedia URL 2",
-        # その他英語文言
+        "hp": "HP",
+        "attack": "Attack",
+        "defense": "Defense",
+        "speed": "Speed",
+        "insight": "Insight",
+        "popularity": "Popularity",
+        "battle_log": "Battle Log",
+        "winner": "🏆 Winner",
+        "start_battle": "⚡ Battle Start!",
+        "first_move": "⚡ First Move:",
+        "victory": "🏅 Victory!",
+        "image_warning": "Image not available"
     }
 }[LANG]
+
 
 
 
