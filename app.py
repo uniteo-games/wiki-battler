@@ -50,16 +50,23 @@ if st.button("バトル開始！") and url1 and url2:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.image(img1_display, width=200)
+        if img1_display:
+            st.image(img1_display, width=200)
+        else:
+            st.warning("画像が表示できません")
         st.markdown(f"### {name1}")
         st.markdown(f"**体力: {hp1}**", unsafe_allow_html=True)
         st.markdown(stats1_text)
     
     with col2:
-        st.image(img2_display, width=200)
+        if img2_display:
+            st.image(img2_display, width=200)
+        else:
+            st.warning("画像が表示できません")
         st.markdown(f"### {name2}")
         st.markdown(f"**体力: {hp2}**", unsafe_allow_html=True)
         st.markdown(stats2_text)
+
 
 
     def update_stats():
