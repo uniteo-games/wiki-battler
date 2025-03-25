@@ -28,7 +28,7 @@ TEXT = {
         "battle_log": "戦闘ログ",
         "winner": "🏆 勝者",
         "start_battle": "⚡ 戦闘開始！",
-        "first_move": "⚡ 先手は：",
+        "first_turn": "⚡ 先手は：",
         "victory": "🏅 勝者！",
         "image_warning": "画像が表示できません"
     },
@@ -46,7 +46,7 @@ TEXT = {
         "battle_log": "Battle Log",
         "winner": "🏆 Winner",
         "start_battle": "⚡ Battle Start!",
-        "first_move": "⚡ First Move:",
+        "first_turn": "⚡ First Move:",
         "victory": "🏅 Victory!",
         "image_warning": "Image not available"
     }
