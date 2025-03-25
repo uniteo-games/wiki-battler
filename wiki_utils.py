@@ -1,7 +1,7 @@
 import requests
 from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageOps, ImageDraw, ImageFont
 from io import BytesIO
 import base64
 
@@ -62,7 +62,6 @@ def download_image(url):
         content_type = res.headers.get("Content-Type", "").lower()
         if "image" not in content_type:
             raise ValueError("Not an image")
-
         img_data = BytesIO(res.content)
         img_data.seek(0)
         img = Image.open(img_data).convert("RGB")
@@ -88,7 +87,6 @@ def image_to_base64(img):
 
 def create_placeholder_image(char="？"):
     img = Image.new("RGB", (IMAGE_SIZE, IMAGE_SIZE), color=(255, 255, 100))
-    from PIL import ImageDraw, ImageFont
     draw = ImageDraw.Draw(img)
     try:
         font = ImageFont.truetype("arial.ttf", 120)
@@ -107,3 +105,6 @@ def darken_and_grayscale(img):
 def red_flash_image(img):
     red_overlay = Image.new("RGB", img.size, (255, 0, 0))
     return Image.blend(img, red_overlay, 0.4)
+
+def add_yellow_border(img, thickness=6):
+    return ImageOps.expand(img, border=thickness, fill=(255, 255, 0))
