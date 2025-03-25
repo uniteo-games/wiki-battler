@@ -48,19 +48,19 @@ if st.button("バトル開始！") and url1 and url2:
     winner = None
 
     col1, col2 = st.columns(2)
+    
     with col1:
-        img_display1 = st.image(img1, width=200)
-        st.markdown(f"### {title1}")
-        hp_display1 = st.markdown(f"**体力: {stats1['体力']}**")
-        stat_box1 = st.empty()
-        winner_text1 = st.empty()
-
+        st.image(img1_display, width=200)
+        st.markdown(f"### {name1}")
+        st.markdown(f"**体力: {hp1}**", unsafe_allow_html=True)
+        st.markdown(stats1_text)
+    
     with col2:
-        img_display2 = st.image(img2, width=200)
-        st.markdown(f"### {title2}")
-        hp_display2 = st.markdown(f"**体力: {stats2['体力']}**")
-        stat_box2 = st.empty()
-        winner_text2 = st.empty()
+        st.image(img2_display, width=200)
+        st.markdown(f"### {name2}")
+        st.markdown(f"**体力: {hp2}**", unsafe_allow_html=True)
+        st.markdown(stats2_text)
+
 
     def update_stats():
         stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
