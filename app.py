@@ -1,10 +1,13 @@
 import streamlit as st
+st.set_page_config(page_title="Wikipediaバトラー", layout="wide")
+from streamlit_javascript import st_javascript
 from wiki_utils import *
 from battle_logic import *
 import time
 from PIL import Image
 import random
-from streamlit_javascript import st_javascript
+
+
 
 # 🌐 自動言語切替
 lang_code = st_javascript("window.navigator.language")[:2]
