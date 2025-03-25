@@ -1,4 +1,6 @@
 import streamlit as st
+st.set_page_config(page_title="Wikipediaバトラー", layout="wide")  # 🔴 ←最上部！
+
 from wiki_utils import *
 from battle_logic import *
 import time
