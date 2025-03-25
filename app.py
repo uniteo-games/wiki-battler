@@ -45,43 +45,24 @@ if st.button("バトル開始！") and url1 and url2:
     hp_dict = {title1: stats1["体力"], title2: stats2["体力"]}
     log_lines = []
     turn_counter = 1
-    winner = None
 
     col1, col2 = st.columns(2)
-    
-    with col1:
-        if img1_display:
-            st.image(img1_display, width=200)
-        else:
-            st.warning("画像が表示できません")
-        st.markdown(f"### {name1}")
-        st.markdown(f"**体力: {hp1}**", unsafe_allow_html=True)
-        st.markdown(stats1_text)
-    
-    with col2:
-        if img2_display:
-            st.image(img2_display, width=200)
-        else:
-            st.warning("画像が表示できません")
-        st.markdown(f"### {name2}")
-        st.markdown(f"**体力: {hp2}**", unsafe_allow_html=True)
-        st.markdown(stats2_text)
+    stat_col1 = col1.container()
+    stat_col2 = col2.container()
 
+    with stat_col1:
+        st.image(img1_orig, width=200)
+        st.markdown(f"### {title1}")
+        hp_display1 = st.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
+        stat_box1 = st.markdown("\n".join([f"{k}: {v}" for k, v in stats1.items() if k != "体力"]))
 
+    with stat_col2:
+        st.image(img2_orig, width=200)
+        st.markdown(f"### {title2}")
+        hp_display2 = st.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
+        stat_box2 = st.markdown("\n".join([f"{k}: {v}" for k, v in stats2.items() if k != "体力"]))
 
-    def update_stats():
-        stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
-        stats_copy2 = {k: v for k, v in stats2.items() if k != "体力"}
-
-        hp_display1.markdown(f"**体力: {stats1['体力']}**")
-        hp_display2.markdown(f"**体力: {stats2['体力']}**")
-
-        stat_box1.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy1.items()]))
-        stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy2.items()]))
-
-    update_stats()
-
-    log_container = st.empty()
+    log_container = st.container()
     log_lines.insert(0, f"{turn_counter}: ⚡ 戦闘開始！")
 
     first, second = random.sample([title1, title2], 2)
@@ -93,27 +74,23 @@ if st.button("バトル開始！") and url1 and url2:
         def_stats = stats2 if defender == title2 else stats1
 
         events = []
-        damage = battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events)
-        heal = check_heal(attacker, atk_stats, hp_dict, events)
+        battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events)
+        check_heal(attacker, atk_stats, hp_dict, events)
 
-        if defender == title1:
-            stats1["体力"] = hp_dict[title1]
-            img_display1.image(process_image_for_hit(img1_orig), width=200)
-            time.sleep(0.2)
-            img_display1.image(img1_orig, width=200)
-        else:
-            stats2["体力"] = hp_dict[title2]
-            img_display2.image(process_image_for_hit(img2_orig), width=200)
-            time.sleep(0.2)
-            img_display2.image(img2_orig, width=200)
+        stats1["体力"] = hp_dict[title1]
+        stats2["体力"] = hp_dict[title2]
 
-        update_stats()
+        hp_display1.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
+        hp_display2.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
+
+        stat_box1.markdown("\n".join([f"{k}: {v}" for k, v in stats1.items() if k != "体力"]))
+        stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats2.items() if k != "体力"]))
 
         for event in reversed(events):
             log_lines.insert(0, f"{turn_counter}: {event}")
 
-        turn_counter += 1
         log_container.text_area("戦闘ログ", height=400, value="\n".join(log_lines))
+        turn_counter += 1
         time.sleep(0.8)
 
     winner = title1 if hp_dict[title1] > 0 else title2
@@ -121,13 +98,14 @@ if st.button("バトル開始！") and url1 and url2:
     log_lines.insert(0, f"{turn_counter}: 🏆 勝者：{winner}！！")
     log_container.text_area("戦闘ログ", height=400, value="\n".join(log_lines))
 
-    if winner == title1:
-        img_display1.image(add_yellow_border(img1_orig), width=200)
-        img_display2.image(process_image_for_defeat(img2_orig), width=200)
-        winner_text1.markdown("🏅 **勝者！**")
-        winner_text2.markdown("")
-    else:
-        img_display2.image(add_yellow_border(img2_orig), width=200)
-        img_display1.image(process_image_for_defeat(img1_orig), width=200)
-        winner_text2.markdown("🏅 **勝者！**")
-        winner_text1.markdown("")
+    with col1:
+        if winner == title1:
+            st.image(add_yellow_border(img1_orig), width=200)
+        else:
+            st.image(process_image_for_defeat(img1_orig), width=200)
+
+    with col2:
+        if winner == title2:
+            st.image(add_yellow_border(img2_orig), width=200)
+        else:
+            st.image(process_image_for_defeat(img2_orig), width=200)
