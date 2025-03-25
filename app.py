@@ -56,7 +56,7 @@ TEXT = {
 
 
 st.title(TEXT["title"])
-
+log_box = st.empty()
 col_input1, col_input2 = st.columns(2)
 with col_input1:
     url1 = st.text_input(TEXT["input1"])
@@ -145,7 +145,7 @@ if st.button(TEXT["start_button"]) and url1 and url2:
         for event in reversed(events):
             log_lines.insert(0, f"{turn_counter}: {event}")
         turn_counter += 1
-        log_box = st.empty()
+        
         log_box.text_area(TEXT["log_title"], height=400, value="\n".join(log_lines), key="log_area_updated")
         time.sleep(0.8)
 
