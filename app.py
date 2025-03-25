@@ -116,7 +116,7 @@ if st.button(TEXT["start_button"]) and url1 and url2:
         stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats2.items() if k != "体力"]))
 
     first, second = random.sample([title1, title2], 2)
-    log_lines.insert(0, f"{turn_counter}: {TEXT['start']}")
+    log_lines.insert(0, f"{turn_counter}: {TEXT['start_battle']}")
     log_lines.insert(0, f"{turn_counter}: {TEXT['first_turn']}{first}")
     log_box = st.text_area(TEXT["log_title"], height=400, value="\n".join(log_lines), key="log_area")
 
