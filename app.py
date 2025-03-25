@@ -3,58 +3,63 @@ from wiki_utils import *
 from battle_logic import *
 import time
 from PIL import Image
-from streamlit_javascript import st_javascript
+import random
 
-# 🌍 自動言語判定
-user_lang = st_javascript("navigator.language") or "en"
-lang_code = user_lang[:2]
-if lang_code not in ["ja", "en"]:
-    lang_code = "en"
+# 多言語対応辞書（日本語・英語）
+def detect_language():
+    browser_lang = st.get_option("browser.language")
+    return "ja" if browser_lang and browser_lang.startswith("ja") else "en"
 
-# 🌐 多言語辞書
+LANG = detect_language()
+
 TEXT = {
     "ja": {
-        "title": "Wikipedia バトラー",
-        "start_btn": "バトル開始！",
-        "url1": "Wikipedia URL 1",
-        "url2": "Wikipedia URL 2",
+        "title": "Wikipediaバトラー",
+        "input1": "Wikipedia URL 1",
+        "input2": "Wikipedia URL 2",
+        "start_battle": "バトル開始！",
         "start": "⚡ 戦闘開始！",
         "first_turn": "⚡ 先手は：",
-        "winner": "🏆 勝者：",
-        "victory": "🏅 勝者！",
         "log_title": "戦闘ログ",
+        "winner_prefix": "🏆 勝者：",
         "hp": "体力",
+        "stats": "ステータス",
+        "winner_mark": "🏅 勝者！",
+        "no_image": "画像が表示できません"
     },
     "en": {
         "title": "Wikipedia Battler",
-        "start_btn": "Start Battle!",
-        "url1": "Wikipedia URL 1",
-        "url2": "Wikipedia URL 2",
-        "start": "⚡ Battle starts!",
-        "first_turn": "⚡ First turn: ",
-        "winner": "🏆 Winner: ",
-        "victory": "🏅 Winner!",
+        "input1": "Wikipedia URL 1",
+        "input2": "Wikipedia URL 2",
+        "start_battle": "Start Battle!",
+        "start": "⚡ Battle begins!",
+        "first_turn": "⚡ First move: ",
         "log_title": "Battle Log",
+        "winner_prefix": "🏆 Winner: ",
         "hp": "HP",
+        "stats": "Stats",
+        "winner_mark": "🏅 Winner!",
+        "no_image": "Image not available"
     }
-}[lang_code]
+}[LANG]
 
 st.set_page_config(page_title=TEXT["title"], layout="wide")
 st.title("⚔️ " + TEXT["title"])
 
 col_input1, col_input2 = st.columns(2)
 with col_input1:
-    url1 = st.text_input(TEXT["url1"])
+    url1 = st.text_input(TEXT["input1"])
 with col_input2:
-    url2 = st.text_input(TEXT["url2"])
+    url2 = st.text_input(TEXT["input2"])
 
+# 勝者画像に黄色枠をつける関数
 def add_yellow_border(img, border_size=10):
     w, h = img.size
     bordered = Image.new("RGB", (w + 2 * border_size, h + 2 * border_size), (255, 255, 0))
     bordered.paste(img, (border_size, border_size))
     return bordered
 
-if st.button(TEXT["start_btn"]) and url1 and url2:
+if st.button(TEXT["start_battle"]) and url1 and url2:
     title1 = get_page_title(url1)
     title2 = get_page_title(url2)
     lang1 = extract_lang_from_url(url1)
@@ -80,23 +85,26 @@ if st.button(TEXT["start_btn"]) and url1 and url2:
     hp_dict = {title1: stats1["体力"], title2: stats2["体力"]}
     log_lines = []
     turn_counter = 1
+    winner = None
 
     col1, col2 = st.columns(2)
-
     with col1:
         img_display1 = st.empty()
         img_display1.image(img1, width=200)
         st.markdown(f"### {title1}")
         hp_display1 = st.markdown(f"**{TEXT['hp']}: {stats1['体力']}**", unsafe_allow_html=True)
-        stat_box1 = st.markdown("\n".join([f"{k}: {v}" for k, v in stats1.items() if k != "体力"]))
+        stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
+        stat_box1 = st.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy1.items()]))
 
     with col2:
         img_display2 = st.empty()
         img_display2.image(img2, width=200)
         st.markdown(f"### {title2}")
         hp_display2 = st.markdown(f"**{TEXT['hp']}: {stats2['体力']}**", unsafe_allow_html=True)
-        stat_box2 = st.markdown("\n".join([f"{k}: {v}" for k, v in stats2.items() if k != "体力"]))
+        stats_copy2 = {k: v for k, v in stats2.items() if k != "体力"}
+        stat_box2 = st.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy2.items()]))
 
+# （ここから後半が続きます）
     winner_text1 = st.empty()
     winner_text2 = st.empty()
     log_box = st.empty()
