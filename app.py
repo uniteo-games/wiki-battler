@@ -5,40 +5,31 @@ from PIL import Image
 from wiki_utils import *
 from battle_logic import *
 from streamlit_javascript import st_javascript
-st.set_page_config(page_title=TEXT["title"], layout="wide")
-# 言語自動判定（日本語 or 英語のみ）
+
+# ✅ 固定タイトルにして安全にページ設定
+st.set_page_config(page_title="Wikipediaバトラー", layout="wide")
+
+# ⬇ ここから言語自動判定など
 lang_code = st_javascript("navigator.language || navigator.userLanguage;")
 LANG = "ja" if lang_code and "ja" in lang_code else "en"
 
-# 多言語テキスト辞書
 TEXT = {
     "ja": {
-        "title": "⚔️ Wikipedia バトラー",
+        "title": "Wikipediaバトラー",
         "start_button": "バトル開始！",
         "input1": "Wikipedia URL 1",
         "input2": "Wikipedia URL 2",
-        "log_title": "戦闘ログ",
-        "winner": "🏆 勝者：",
-        "start": "⚡ 戦闘開始！",
-        "first_turn": "⚡ 先手は：",
-        "hp": "体力",
-        "victory": "🏅 勝者！",
-        "no_image": "画像が表示できません",
+        # その他日本語文言
     },
     "en": {
-        "title": "⚔️ Wikipedia Battler",
+        "title": "Wikipedia Battler",
         "start_button": "Start Battle!",
         "input1": "Wikipedia URL 1",
         "input2": "Wikipedia URL 2",
-        "log_title": "Battle Log",
-        "winner": "🏆 Winner: ",
-        "start": "⚡ Battle Start!",
-        "first_turn": "⚡ First move: ",
-        "hp": "HP",
-        "victory": "🏅 Winner!",
-        "no_image": "Unable to display image",
+        # その他英語文言
     }
 }[LANG]
+
 
 
 st.title(TEXT["title"])
