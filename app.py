@@ -5,7 +5,7 @@ from PIL import Image
 from wiki_utils import *
 from battle_logic import *
 from streamlit_javascript import st_javascript
-
+st.set_page_config(page_title=TEXT["title"], layout="wide")
 # 言語自動判定（日本語 or 英語のみ）
 lang_code = st_javascript("navigator.language || navigator.userLanguage;")
 LANG = "ja" if lang_code and "ja" in lang_code else "en"
@@ -40,7 +40,7 @@ TEXT = {
     }
 }[LANG]
 
-st.set_page_config(page_title=TEXT["title"], layout="wide")
+
 st.title(TEXT["title"])
 
 col_input1, col_input2 = st.columns(2)
