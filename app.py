@@ -5,13 +5,11 @@ import time
 from PIL import Image
 import random
 
-# 多言語対応辞書（日本語・英語）
-def detect_language():
-    browser_lang = st.get_option("browser.language")
-    return "ja" if browser_lang and browser_lang.startswith("ja") else "en"
+# 言語選択（安全な代替方法）
+lang_selection = st.sidebar.selectbox("Select Language / 言語を選択", ["日本語", "English"])
+LANG = "ja" if lang_selection == "日本語" else "en"
 
-LANG = detect_language()
-
+# 多言語辞書
 TEXT = {
     "ja": {
         "title": "Wikipediaバトラー",
@@ -45,6 +43,7 @@ TEXT = {
 
 st.set_page_config(page_title=TEXT["title"], layout="wide")
 st.title("⚔️ " + TEXT["title"])
+
 
 col_input1, col_input2 = st.columns(2)
 with col_input1:
