@@ -108,3 +108,20 @@ def red_flash_image(img):
 
 def add_yellow_border(img, thickness=6):
     return ImageOps.expand(img, border=thickness, fill=(255, 255, 0))
+
+def fetch_wiki_content(url):
+    lang = extract_lang_from_url(url)
+    title = get_page_title(url)
+    text = get_article_text(title, lang)
+    return lang, title, text
+
+def get_processed_image(title, lang):
+    img_url = get_first_image(title, lang)
+    if img_url:
+        img = download_image(img_url)
+        if img:
+            return crop_to_square(img)
+    # 画像取得に失敗した場合はタイトルの最初の文字を画像に
+    fallback_char = title[0] if title else "？"
+    return create_placeholder_image(fallback_char)
+
