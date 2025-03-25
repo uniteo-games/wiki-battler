@@ -25,7 +25,9 @@ TEXT = {
         "hp": "体力",
         "stats": "ステータス",
         "winner_mark": "🏅 勝者！",
-        "no_image": "画像が表示できません"
+        "no_image": "画像が表示できません",
+        "winner": "🏆 勝者：",
+        "victory": "🏅 勝者！"
     },
     "en": {
         "title": "Wikipedia Battler",
@@ -39,7 +41,9 @@ TEXT = {
         "hp": "HP",
         "stats": "Stats",
         "winner_mark": "🏅 Winner!",
-        "no_image": "Image not available"
+        "no_image": "Image not available",
+        "winner": "🏆 Winner: ",
+        "victory": "🏅 Winner!"
     }
 }[LANG]
 
