@@ -1,111 +1,87 @@
 import streamlit as st
-from wiki_utils import *
-from battle_logic import *
 import time
-from PIL import Image
+from wiki_utils import fetch_wiki_content, get_processed_image
+from battle_logic import generate_stats, battle_round
 
-st.set_page_config(page_title="Wikipediaバトラー", layout="wide")
-st.title("⚔️ Wikipedia バトラー")
+st.set_page_config(page_title="Wikiバトラー", layout="wide")
 
+# 初期化
+if "log" not in st.session_state:
+    st.session_state.log = []
+if "turn" not in st.session_state:
+    st.session_state.turn = 0
+if "battle_over" not in st.session_state:
+    st.session_state.battle_over = False
+if "highlight" not in st.session_state:
+    st.session_state.highlight = {"left": False, "right": False}
+
+# 入力
 col_input1, col_input2 = st.columns(2)
 with col_input1:
-    url1 = st.text_input("Wikipedia URL 1")
+    url1 = st.text_input("左のURL", "https://ja.wikipedia.org/wiki/ギザの大ピラミッド")
 with col_input2:
-    url2 = st.text_input("Wikipedia URL 2")
+    url2 = st.text_input("右のURL", "https://ja.wikipedia.org/wiki/心理学原理")
 
-def add_yellow_border(img, border_size=10):
-    w, h = img.size
-    bordered = Image.new("RGB", (w + 2 * border_size, h + 2 * border_size), (255, 255, 0))
-    bordered.paste(img, (border_size, border_size))
-    return bordered
+if url1 and url2:
+    # データ取得
+    text1, title1, page1 = fetch_wiki_content(url1)
+    text2, title2, page2 = fetch_wiki_content(url2)
+    stats1 = generate_stats(text1, page1)
+    stats2 = generate_stats(text2, page2)
+    img1 = get_processed_image(page1)
+    img2 = get_processed_image(page2)
 
-if st.button("バトル開始！") and url1 and url2:
-    title1 = get_page_title(url1)
-    title2 = get_page_title(url2)
-    lang1 = extract_lang_from_url(url1)
-    lang2 = extract_lang_from_url(url2)
-
-    text1 = get_article_text(title1, lang1)
-    text2 = get_article_text(title2, lang2)
-
-    stats1 = generate_stats(text1)
-    stats2 = generate_stats(text2)
-
-    image_url1 = get_first_image(title1, lang1)
-    image_url2 = get_first_image(title2, lang2)
-
-    img1 = download_image(image_url1) if image_url1 else None
-    img2 = download_image(image_url2) if image_url2 else None
-    img1 = crop_to_square(img1) if img1 else create_placeholder_image(title1[0])
-    img2 = crop_to_square(img2) if img2 else create_placeholder_image(title2[0])
-
-    img1_orig = img1.copy()
-    img2_orig = img2.copy()
-
-    hp_dict = {title1: stats1["体力"], title2: stats2["体力"]}
-    log_lines = []
-    turn_counter = 1
-
+    # バトラー表示
     col1, col2 = st.columns(2)
-    stat_col1 = col1.container()
-    stat_col2 = col2.container()
-
-    with stat_col1:
-        st.image(img1_orig, width=200)
-        st.markdown(f"### {title1}")
-        hp_display1 = st.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
-        stat_box1 = st.markdown("\n".join([f"{k}: {v}" for k, v in stats1.items() if k != "体力"]))
-
-    with stat_col2:
-        st.image(img2_orig, width=200)
-        st.markdown(f"### {title2}")
-        hp_display2 = st.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
-        stat_box2 = st.markdown("\n".join([f"{k}: {v}" for k, v in stats2.items() if k != "体力"]))
-
-    log_container = st.container()
-    log_lines.insert(0, f"{turn_counter}: ⚡ 戦闘開始！")
-
-    first, second = random.sample([title1, title2], 2)
-
-    while hp_dict[title1] > 0 and hp_dict[title2] > 0:
-        attacker = first if turn_counter % 2 == 1 else second
-        defender = second if attacker == first else first
-        atk_stats = stats1 if attacker == title1 else stats2
-        def_stats = stats2 if defender == title2 else stats1
-
-        events = []
-        battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events)
-        check_heal(attacker, atk_stats, hp_dict, events)
-
-        stats1["体力"] = hp_dict[title1]
-        stats2["体力"] = hp_dict[title2]
-
-        hp_display1.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
-        hp_display2.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
-
-        stat_box1.markdown("\n".join([f"{k}: {v}" for k, v in stats1.items() if k != "体力"]))
-        stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats2.items() if k != "体力"]))
-
-        for event in reversed(events):
-            log_lines.insert(0, f"{turn_counter}: {event}")
-
-        log_container.text_area("戦闘ログ", height=400, value="\n".join(log_lines))
-        turn_counter += 1
-        time.sleep(0.8)
-
-    winner = title1 if hp_dict[title1] > 0 else title2
-    loser = title2 if winner == title1 else title1
-    log_lines.insert(0, f"{turn_counter}: 🏆 勝者：{winner}！！")
-    log_container.text_area("戦闘ログ", height=400, value="\n".join(log_lines))
-
     with col1:
-        if winner == title1:
-            st.image(add_yellow_border(img1_orig), width=200)
-        else:
-            st.image(process_image_for_defeat(img1_orig), width=200)
-
+        st.image(img1, width=220)
+        if st.session_state.highlight["left"]:
+            st.image(img1, caption=None, width=120, output_format="PNG", channels="RGB", use_column_width=False)
+            st.markdown('<div style="border: 5px solid yellow; width: 120px; margin: auto;"></div>', unsafe_allow_html=True)
+        st.markdown(f"### {title1}")
+        st.markdown(f"<b style='font-size: 20px;'>体力: {stats1['体力']}</b>", unsafe_allow_html=True)
+        st.markdown(f"攻撃力: {stats1['攻撃力']} 防御力: {stats1['防御力']} 素早さ: {stats1['素早さ']} 読みの力: {stats1['読みの力']} 人気度: {stats1['人気度']}")
     with col2:
-        if winner == title2:
-            st.image(add_yellow_border(img2_orig), width=200)
-        else:
-            st.image(process_image_for_defeat(img2_orig), width=200)
+        st.image(img2, width=220)
+        if st.session_state.highlight["right"]:
+            st.image(img2, caption=None, width=120, output_format="PNG", channels="RGB", use_column_width=False)
+            st.markdown('<div style="border: 5px solid yellow; width: 120px; margin: auto;"></div>', unsafe_allow_html=True)
+        st.markdown(f"### {title2}")
+        st.markdown(f"<b style='font-size: 20px;'>体力: {stats2['体力']}</b>", unsafe_allow_html=True)
+        st.markdown(f"攻撃力: {stats2['攻撃力']} 防御力: {stats2['防御力']} 素早さ: {stats2['素早さ']} 読みの力: {stats2['読みの力']} 人気度: {stats2['人気度']}")
+
+    if st.button("⚔️ バトル開始！"):
+        st.session_state.log = ["1: ⚡ 戦闘開始！"]
+        st.session_state.turn = 1
+        st.session_state.battle_over = False
+        st.session_state.highlight = {"left": False, "right": False}
+
+        hp1 = stats1["体力"]
+        hp2 = stats2["体力"]
+        attacker = "left"
+
+        while hp1 > 0 and hp2 > 0:
+            result, dmg, event = battle_round(stats1, stats2, attacker)
+            if attacker == "left":
+                hp2 = max(0, hp2 - dmg)
+            else:
+                hp1 = max(0, hp1 - dmg)
+
+            log_msg = f"{st.session_state.turn+1}: {event or result}"
+            st.session_state.log.insert(0, log_msg)
+
+            if hp1 == 0 or hp2 == 0:
+                winner = title1 if hp2 == 0 else title2
+                st.session_state.log.insert(0, f"{st.session_state.turn+2}: 🏆 勝者：{winner}！！")
+                st.session_state.highlight["left"] = (hp2 == 0)
+                st.session_state.highlight["right"] = (hp1 == 0)
+                break
+
+            attacker = "right" if attacker == "left" else "left"
+            st.session_state.turn += 1
+            time.sleep(0.2)
+
+    # ログ表示
+    st.markdown("### 戦闘ログ")
+    with st.container():
+        st.code("\n".join(st.session_state.log), language="markdown")
