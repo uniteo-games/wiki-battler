@@ -42,7 +42,8 @@ def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000)
     intuition = min(100, max(5, intuition_score))
 
 
-    popularity = min(500, max(10, int(link_count * 1.5)))  # リンク数に比例して人気度を上げる
+    #popularity = min(500, max(10, int(link_count * 1.5)))  # リンク数に比例して人気度を上げる
+    popularity = int(link_count * 1.5)  # リンク数に比例して人気度を上げる
 
     return {
         "攻撃力": attack,
