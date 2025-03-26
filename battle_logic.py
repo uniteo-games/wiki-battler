@@ -1,40 +1,37 @@
 import random
 import time
+from wiki_utils import red_flash_image, darken_and_grayscale
 
 # ステータス生成（テキスト量・記号・リンク数などに応じて）
 def generate_stats(text, page=None):
     length = len(text)
     comma_period = text.count("、") + text.count("。")
-    links = text.count("[[") if "[[" in text else 0  # テキスト中にリンク表記があれば
+    links = text.count("[[") if "[[" in text else 0
 
     stats = {
         "攻撃力": min(300, 30 + length // 120),
         "防御力": min(300, 20 + comma_period),
-        "素早さ": max(10, 150 - (length // 100)),  # 長文はやや鈍く
+        "素早さ": max(10, 150 - (length // 100)),
         "読みの力": min(300, 10 + links * 5),
         "人気度": min(300, 10 + text.count("の") + text.count("は")),
+        "体力": min(1000, 400 + length // 5 + (20 + comma_period) // 2),
     }
-
-    # 体力（HP）は文字量に比例＋防御力の一部加算
-    stats["体力"] = min(1000, 400 + length // 5 + stats["防御力"] // 2)
-
     return stats
 
 # バトル1ターンの処理
-def battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events):
+def battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events, special_moves):
     # 必殺技チャンス
-    if "必殺技候補" in atk_stats and atk_stats["必殺技候補"]:
-        if random.randint(1, 20) == 1:  # 出現率 1/20
-            technique = random.choice(atk_stats["必殺技候補"])
-            success_chance = min(70, (atk_stats["素早さ"] + atk_stats["読みの力"]) // 2)
-            if random.randint(1, 100) <= success_chance:
-                damage = int(atk_stats["攻撃力"] * 2.5)
-                hp_dict[defender] = max(0, hp_dict[defender] - damage)
-                events.append(f"{attacker}の必殺技『{technique}』がヒット！ 💥 {defender} に {damage} ダメージ！")
-                return damage
-            else:
-                events.append(f"{attacker}の必殺技『{technique}』は外れた…")
-                return 0
+    if special_moves and random.randint(1, 20) == 1:  # 出現率 1/20
+        technique = random.choice(special_moves)
+        success_chance = min(90, (atk_stats["素早さ"] + atk_stats["読みの力"]) // 2)
+        if random.randint(1, 100) <= success_chance:
+            damage = int(atk_stats["攻撃力"] * 2.5)
+            hp_dict[defender] = max(0, hp_dict[defender] - damage)
+            events.append(f"{attacker}の必殺技『{technique}』がヒット！ 💥 {defender} に {damage} ダメージ！")
+            return damage
+        else:
+            events.append(f"{attacker}の必殺技『{technique}』は外れた…")
+            return 0
 
     # 通常攻撃処理
     if random.randint(1, 100) <= def_stats["素早さ"] // 2:
@@ -42,7 +39,7 @@ def battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events):
         return 0
 
     base_damage = atk_stats["攻撃力"]
-    if random.randint(1, 8) == 1:  # 1/8 の確率で完全防御
+    if random.randint(1, 8) == 1:
         if random.randint(1, 100) <= def_stats["防御力"]:
             events.append(f"🛡 {defender} は完全防御に成功！ノーダメージ！")
             return 0
@@ -61,9 +58,7 @@ def check_heal(name, stats, hp_dict, log_lines):
         hp_dict[name] = min(stats['体力'], hp_dict[name] + heal)
         log_lines.insert(1, f"💖 {name} は観客の声援で {heal} 回復した！")
 
-# 赤く光る画像を返す（PILイメージ）
-from wiki_utils import red_flash_image, darken_and_grayscale
-
+# 画像処理
 def process_image_for_hit(img):
     return red_flash_image(img)
 
