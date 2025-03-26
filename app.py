@@ -1,18 +1,57 @@
 import streamlit as st
 from wiki_utils import *
 from battle_logic import *
+import requests
 import time
 from PIL import Image
 import random
+import streamlit.components.v1 as components
 
-st.set_page_config(page_title="Wikipediaバトラー", layout="wide")
-st.title("⚔️ Wikipedia バトラー")
+st.set_page_config(page_title="Wiki大戦", layout="wide")
+st.title("⚔️ Wiki大戦")
+
+def search_wikipedia_titles(query, lang="ja"):
+    """キーワードからWikipediaの記事候補を返す"""
+    url = f"https://{lang}.wikipedia.org/w/api.php"
+    params = {
+        "action": "opensearch",
+        "format": "json",
+        "search": query
+    }
+    try:
+        response = requests.get(url, params=params)
+        data = response.json()
+        return data[1], data[3]  # title list, URL list
+    except:
+        return [], []
 
 col_input1, col_input2 = st.columns(2)
+
 with col_input1:
-    name1 = st.text_input("記事名 1（または Wikipedia URL）", key="name1")
+    input_type1 = st.radio("入力方法 1", ["記事名から選ぶ", "URLを直接入力"])
+    if input_type1 == "記事名から選ぶ":
+        query1 = st.text_input("キーワードを入力（例：ピラミッド）", key="query1")
+        if query1:
+            titles1, urls1 = search_wikipedia_titles(query1)
+            selected1 = st.selectbox("記事候補を選択", titles1) if titles1 else None
+            url1 = urls1[titles1.index(selected1)] if selected1 else ""
+        else:
+            url1 = ""
+    else:
+        url1 = st.text_input("Wikipedia URL 1", key="url1")
+
 with col_input2:
-    name2 = st.text_input("記事名 2（または Wikipedia URL）", key="name2")
+    input_type2 = st.radio("入力方法 2", ["記事名から選ぶ", "URLを直接入力"])
+    if input_type2 == "記事名から選ぶ":
+        query2 = st.text_input("キーワードを入力（例：バッハ）", key="query2")
+        if query2:
+            titles2, urls2 = search_wikipedia_titles(query2)
+            selected2 = st.selectbox("記事候補を選択", titles2) if titles2 else None
+            url2 = urls2[titles2.index(selected2)] if selected2 else ""
+        else:
+            url2 = ""
+    else:
+        url2 = st.text_input("Wikipedia URL 2", key="url2")
 
 def add_yellow_border(img, border_size=10):
     w, h = img.size
