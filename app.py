@@ -1,10 +1,8 @@
-
 import streamlit as st
 from wiki_utils import *
 from battle_logic import *
 import time
 from PIL import Image
-import random
 
 st.set_page_config(page_title="Wikipediaバトラー", layout="wide")
 st.title("⚔️ Wikipedia バトラー")
@@ -50,34 +48,27 @@ if st.button("バトル開始！") and url1 and url2:
     winner = None
 
     col1, col2 = st.columns(2)
-
+    
     with col1:
-        img_display1 = st.empty()
-        img_display1.image(img1, width=200)
-        st.markdown(f"### {title1}")
-        hp_display1 = st.empty()
-        hp_display1.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
-        stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
-        stat_box1 = st.empty()
-        stat_box1.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy1.items()]))
-        winner_text1 = st.empty()
-
+        st.image(img1_display, width=200)
+        st.markdown(f"### {name1}")
+        st.markdown(f"**体力: {hp1}**", unsafe_allow_html=True)
+        st.markdown(stats1_text)
+    
     with col2:
-        img_display2 = st.empty()
-        img_display2.image(img2, width=200)
-        st.markdown(f"### {title2}")
-        hp_display2 = st.empty()
-        hp_display2.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
-        stats_copy2 = {k: v for k, v in stats2.items() if k != "体力"}
-        stat_box2 = st.empty()
-        stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy2.items()]))
-        winner_text2 = st.empty()
+        st.image(img2_display, width=200)
+        st.markdown(f"### {name2}")
+        st.markdown(f"**体力: {hp2}**", unsafe_allow_html=True)
+        st.markdown(stats2_text)
+
 
     def update_stats():
         stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
         stats_copy2 = {k: v for k, v in stats2.items() if k != "体力"}
-        hp_display1.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
-        hp_display2.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
+
+        hp_display1.markdown(f"**体力: {stats1['体力']}**")
+        hp_display2.markdown(f"**体力: {stats2['体力']}**")
+
         stat_box1.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy1.items()]))
         stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy2.items()]))
 
