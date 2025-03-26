@@ -31,7 +31,7 @@ def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000)
 
     base_hp = min(max_hp, 500 + int(math.sqrt(text_length)) // 2)
     attack = min(300, max(10, 30 + int(math.log(link_count + 1) * 25)))
-    defense = min(300, max(5, 15 + int(link_density * 100)))
+    defense = min(200, max(10, int((link_density ** 0.5) * 80)))
     speed = min(150, max(20, 100 - int(text_length ** 0.3)))
         # 読みの力（リンク密度が高いほど下がる）
     link_density = link_count / word_count if word_count else 0
