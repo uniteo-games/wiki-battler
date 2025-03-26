@@ -16,7 +16,7 @@ def generate_stats(article_text: str, max_hp: int = 1000) -> dict:
     defense = min(100, max(5, 15 + int(link_density * 100)))
     speed = min(150, max(20, 100 - int(text_length ** 0.3)))
     intuition = min(100, max(10, 20 + int(link_density * 80)))
-    popularity = min(100, max(10, 100 - int(link_count * 0.2)))
+    popularity = min(300, max(10, int(link_count * 1.5)))
 
     return {
         "攻撃力": attack,
