@@ -14,12 +14,16 @@ def extract_lang_from_url(url):
 def get_page_title(url):
     return unquote(url.split("/")[-1])
 
-def get_article_text(title, lang):
+def get_article_text(title, lang="ja"):
     try:
-        url = f"https://{lang}.wikipedia.org/api/rest_v1/page/summary/{quote(title)}"
+        url = f"https://{lang}.wikipedia.org/w/api.php?action=parse&page={quote(title)}&format=json&prop=text&formatversion=2"
         res = requests.get(url)
         if res.status_code == 200:
-            return res.json().get("extract", "")
+            html = res.json()["parse"]["text"]
+            soup = BeautifulSoup(html, "html.parser")
+            paragraphs = soup.find_all("p")
+            text = "\n".join(p.get_text().strip() for p in paragraphs if p.get_text().strip())
+            return text
     except Exception as e:
         print("[記事取得エラー]", e)
     return ""
