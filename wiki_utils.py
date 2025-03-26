@@ -7,21 +7,6 @@ import base64
 
 IMAGE_SIZE = 256  # 正方形のサイズ
 
-def suggest_titles(query, lang="ja"):
-    """WikipediaのサジェストAPIを使って記事タイトル候補を取得する"""
-    url = f"https://{lang}.wikipedia.org/w/api.php"
-    params = {
-        "action": "opensearch",
-        "format": "json",
-        "search": query,
-        "limit": 10
-    }
-    response = requests.get(url, params=params)
-    if response.status_code == 200:
-        return response.json()[1]
-    else:
-        return []
-
 def extract_lang_from_url(url):
     parts = url.split("//")[1].split(".")
     return parts[0] if len(parts) > 0 else "en"
@@ -139,11 +124,9 @@ def get_processed_image(title, lang):
     # 画像取得に失敗した場合はタイトルの最初の文字を画像に
     fallback_char = title[0] if title else "？"
     return create_placeholder_image(fallback_char)
-    
+
 def get_special_moves(title, lang):
-    """
-    記事内のリンク付きテキストから先着15個を必殺技候補として取得
-    """
+    """記事内のリンク付きテキストから先着15個を必殺技候補として取得"""
     try:
         html_url = f"https://{lang}.wikipedia.org/wiki/{quote(title)}"
         res = requests.get(html_url)
@@ -159,3 +142,6 @@ def get_special_moves(title, lang):
         print("[必殺技候補の取得エラー]:", e)
         return []
 
+def format_stats(stats):
+    """体力を除いたステータスを整形"""
+    return "\n".join([f"{k}: {v}" for k, v in stats.items() if k != "体力"])
