@@ -5,6 +5,7 @@ from battle_logic import *
 import time
 from PIL import Image
 import random
+from wiki_utils import suggest_titles
 
 st.set_page_config(page_title="Wikipediaバトラー", layout="wide")
 st.title("⚔️ Wikipedia バトラー")
