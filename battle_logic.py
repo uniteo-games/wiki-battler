@@ -36,12 +36,13 @@ def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000)
         # 読みの力（リンク密度が高いほど下がる）
     link_density = link_count / word_count if word_count else 0
     
-    # 読みの力（直感力）をリンク密度の逆数的に設計
-    intuition = int(100 * math.exp(-3 * link_density))  # 指数関数で急減
-    intuition = min(100, max(10, 20 + int(link_density * 80)))
+# 安定的に広いレンジに分布させる式
+    raw_intuition = 1 / (1 + link_density)  # リンク密度が高いほど読みが弱い（逆相関）
+    intuition_score = int(raw_intuition * 120)  # 拡大係数を調整
+    intuition = min(100, max(5, intuition_score))
 
 
-    popularity = min(300, max(10, int(link_count * 1.5)))  # リンク数に比例して人気度を上げる
+    popularity = min(500, max(10, int(link_count * 1.5)))  # リンク数に比例して人気度を上げる
 
     return {
         "攻撃力": attack,
