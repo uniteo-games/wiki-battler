@@ -1,38 +1,58 @@
-
 import streamlit as st
 from wiki_utils import *
 from battle_logic import *
+import requests
 import time
 from PIL import Image
 import random
-from wiki_utils import suggest_titles
+import streamlit.components.v1 as components
 
-st.set_page_config(page_title="Wikipediaバトラー", layout="wide")
-st.title("⚔️ Wikipedia バトラー")
+st.set_page_config(page_title="Wiki大戦", layout="wide")
+st.title("⚔️ Wiki大戦")
 
-# キーワード検索と記事候補選択
-col_search1, col_search2 = st.columns(2)
-with col_search1:
-    query1 = st.text_input("キーワードを入力（例：ピラミッド）", key="query1")
-    titles1 = suggest_titles(query1, "ja") if query1 else []
-    selected1 = st.selectbox("記事候補を選択", titles1) if titles1 else None
-with col_search2:
-    query2 = st.text_input("キーワードを入力（例：バッハ）", key="query2")
-    titles2 = suggest_titles(query2, "ja") if query2 else []
-    selected2 = st.selectbox("記事候補を選択", titles2) if titles2 else None
+def search_wikipedia_titles(query, lang="ja"):
+    """キーワードからWikipediaの記事候補を返す"""
+    url = f"https://{lang}.wikipedia.org/w/api.php"
+    params = {
+        "action": "opensearch",
+        "format": "json",
+        "search": query
+    }
+    try:
+        response = requests.get(url, params=params)
+        data = response.json()
+        return data[1], data[3]  # title list, URL list
+    except:
+        return [], []
 
-# 直接URL入力欄
 col_input1, col_input2 = st.columns(2)
-with col_input1:
-    url1 = st.text_input("Wikipedia URL 1")
-with col_input2:
-    url2 = st.text_input("Wikipedia URL 2")
 
-# 記事タイトル優先処理
-if selected1:
-    url1 = f"https://ja.wikipedia.org/wiki/{selected1}"
-if selected2:
-    url2 = f"https://ja.wikipedia.org/wiki/{selected2}"
+with col_input1:
+    input_type1 = st.radio("入力方法 1", ["記事名から選ぶ", "URLを直接入力"])
+    if input_type1 == "記事名から選ぶ":
+        query1 = st.text_input("キーワードを入力（例：ピラミッド）", key="query1")
+        if query1:
+            titles1, urls1 = search_wikipedia_titles(query1)
+            selected1 = st.selectbox("記事候補を選択", titles1) if titles1 else None
+            url1 = urls1[titles1.index(selected1)] if selected1 else ""
+        else:
+            url1 = ""
+    else:
+        url1 = st.text_input("Wikipedia URL 1", key="url1")
+
+with col_input2:
+    input_type2 = st.radio("入力方法 2", ["記事名から選ぶ", "URLを直接入力"])
+    if input_type2 == "記事名から選ぶ":
+        query2 = st.text_input("キーワードを入力（例：バッハ）", key="query2")
+        if query2:
+            titles2, urls2 = search_wikipedia_titles(query2)
+            selected2 = st.selectbox("記事候補を選択", titles2) if titles2 else None
+            url2 = urls2[titles2.index(selected2)] if selected2 else ""
+        else:
+            url2 = ""
+    else:
+        url2 = st.text_input("Wikipedia URL 2", key="url2")
+
 
 def add_yellow_border(img, border_size=10):
     w, h = img.size
@@ -52,9 +72,6 @@ if st.button("バトル開始！") and url1 and url2:
     stats1 = generate_stats(text1)
     stats2 = generate_stats(text2)
 
-    skills1 = get_special_moves(title1, lang1)
-    skills2 = get_special_moves(title2, lang2)
-
     image_url1 = get_first_image(title1, lang1)
     image_url2 = get_first_image(title2, lang2)
 
@@ -66,58 +83,72 @@ if st.button("バトル開始！") and url1 and url2:
     img1_orig = img1.copy()
     img2_orig = img2.copy()
 
-    col1, col2 = st.columns(2)
-    with col1:
-        img_display1 = st.empty()
-        winner_text1 = st.empty()
-        st.markdown(f"### {title1}")
-        hp_display1 = st.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
-        stat_box1 = st.markdown(format_stats(stats1))
-    with col2:
-        img_display2 = st.empty()
-        winner_text2 = st.empty()
-        st.markdown(f"### {title2}")
-        hp_display2 = st.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
-        stat_box2 = st.markdown(format_stats(stats2))
-
     hp_dict = {title1: stats1["体力"], title2: stats2["体力"]}
     log_lines = []
     turn_counter = 1
     winner = None
 
+    col1, col2 = st.columns(2)
+
+    with col1:
+        img_display1 = st.empty()
+        img_display1.image(img1, width=200)
+        st.markdown(f"### {title1}")
+        hp_display1 = st.empty()
+        hp_display1.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
+        stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
+        stat_box1 = st.empty()
+        stat_box1.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy1.items()]))
+        winner_text1 = st.empty()
+
+    with col2:
+        img_display2 = st.empty()
+        img_display2.image(img2, width=200)
+        st.markdown(f"### {title2}")
+        hp_display2 = st.empty()
+        hp_display2.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
+        stats_copy2 = {k: v for k, v in stats2.items() if k != "体力"}
+        stat_box2 = st.empty()
+        stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy2.items()]))
+        winner_text2 = st.empty()
+
+    def update_stats():
+        stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
+        stats_copy2 = {k: v for k, v in stats2.items() if k != "体力"}
+        hp_display1.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
+        hp_display2.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
+        stat_box1.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy1.items()]))
+        stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy2.items()]))
+
+    update_stats()
+
     log_container = st.empty()
     log_lines.insert(0, f"{turn_counter}: ⚡ 戦闘開始！")
+
     first, second = random.sample([title1, title2], 2)
-    log_lines.insert(0, f"{turn_counter}: ⚡ 先手は：{first}")
 
     while hp_dict[title1] > 0 and hp_dict[title2] > 0:
         attacker = first if turn_counter % 2 == 1 else second
         defender = second if attacker == first else first
         atk_stats = stats1 if attacker == title1 else stats2
         def_stats = stats2 if defender == title2 else stats1
-        atk_img_display = img_display1 if attacker == title1 else img_display2
-        def_img_display = img_display2 if defender == title2 else img_display1
-        atk_img_orig = img1_orig if attacker == title1 else img2_orig
-        def_img_orig = img2_orig if defender == title2 else img1_orig
-        atk_skills = skills1 if attacker == title1 else skills2
 
         events = []
-        damage = battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events, atk_skills)
+        damage = battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events)
         heal = check_heal(attacker, atk_stats, hp_dict, events)
 
         if defender == title1:
             stats1["体力"] = hp_dict[title1]
+            img_display1.image(process_image_for_hit(img1_orig), width=200)
+            time.sleep(0.2)
+            img_display1.image(img1_orig, width=200)
         else:
             stats2["体力"] = hp_dict[title2]
+            img_display2.image(process_image_for_hit(img2_orig), width=200)
+            time.sleep(0.2)
+            img_display2.image(img2_orig, width=200)
 
-        def_img_display.image(process_image_for_hit(def_img_orig), width=200)
-        time.sleep(0.2)
-        def_img_display.image(def_img_orig, width=200)
-
-        hp_display1.markdown(f"**体力: {stats1['体力']}**")
-        hp_display2.markdown(f"**体力: {stats2['体力']}**")
-        stat_box1.markdown(format_stats(stats1))
-        stat_box2.markdown(format_stats(stats2))
+        update_stats()
 
         for event in reversed(events):
             log_lines.insert(0, f"{turn_counter}: {event}")
