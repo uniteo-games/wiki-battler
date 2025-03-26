@@ -30,8 +30,8 @@ def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000)
     link_density = link_count / word_count if word_count else 0
 
     base_hp = min(max_hp, 500 + int(math.sqrt(text_length)) // 2)
-    attack = min(100, max(10, 20 + int(link_count ** 0.5) + (text_length % 7)))
-    defense = min(100, max(5, 15 + int(link_density * 100)))
+    attack = min(300, max(10, 20 + int(link_count ** 1.5) + (text_length % 7)))
+    defense = min(300, max(5, 15 + int(link_density * 100)))
     speed = min(150, max(20, 100 - int(text_length ** 0.3)))
         # 読みの力（リンク密度が高いほど下がる）
     link_density = link_count / word_count if word_count else 0
@@ -43,7 +43,7 @@ def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000)
 
 
     #popularity = min(500, max(10, int(link_count * 1.5)))  # リンク数に比例して人気度を上げる
-    popularity = int(link_count * 1.5)  # リンク数に比例して人気度を上げる
+    popularity = int(link_count * 0.15)  # リンク数に比例して人気度を上げる
 
     return {
         "攻撃力": attack,
