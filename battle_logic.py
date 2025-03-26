@@ -37,7 +37,7 @@ def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000)
     
     # 読みの力（直感力）をリンク密度の逆数的に設計
     intuition = int(100 * math.exp(-3 * link_density))  # 指数関数で急減
-    intuition = min(100, max(5, intuition))
+#    intuition = min(100, max(5, intuition))
 
     popularity = min(300, max(10, int(link_count * 1.5)))  # リンク数に比例して人気度を上げる
 
