@@ -32,7 +32,11 @@ def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000)
     attack = min(100, max(10, 20 + int(link_count ** 0.5) + (text_length % 7)))
     defense = min(100, max(5, 15 + int(link_density * 100)))
     speed = min(150, max(20, 100 - int(text_length ** 0.3)))
-    intuition = min(100, max(10, 20 + int(link_density * 80)))
+    # 読みの力（リンク密度が高いほど下がる）
+    raw_intuition = 100 - int((link_density * 1000) ** 0.7)
+    intuition_bonus = max(0, 10 - int(math.log2(link_count + 1)))
+    intuition = min(100, max(5, raw_intuition + intuition_bonus))
+
     popularity = min(300, max(10, int(link_count * 1.5)))  # リンク数に比例して人気度を上げる
 
     return {
