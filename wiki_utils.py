@@ -7,6 +7,21 @@ import base64
 
 IMAGE_SIZE = 256  # 正方形のサイズ
 
+def suggest_titles(query, lang="ja"):
+    """WikipediaのサジェストAPIを使って記事タイトル候補を取得する"""
+    url = f"https://{lang}.wikipedia.org/w/api.php"
+    params = {
+        "action": "opensearch",
+        "format": "json",
+        "search": query,
+        "limit": 10
+    }
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        return response.json()[1]
+    else:
+        return []
+
 def extract_lang_from_url(url):
     parts = url.split("//")[1].split(".")
     return parts[0] if len(parts) > 0 else "en"
