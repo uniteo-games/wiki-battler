@@ -68,7 +68,9 @@ if st.button("バトル開始！") and url1 and url2:
 
     text1 = get_article_text(title1, lang1)
     text2 = get_article_text(title2, lang2)
-
+    # ✅ 必殺技候補の取得を追加
+    skills1 = get_special_moves(title1, lang1)
+    skills2 = get_special_moves(title2, lang2)
     stats1 = generate_stats(text1)
     stats2 = generate_stats(text2)
 
@@ -134,7 +136,7 @@ if st.button("バトル開始！") and url1 and url2:
         def_stats = stats2 if defender == title2 else stats1
 
         events = []
-        damage = battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events)
+        damage = battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events, skills1 if attacker == title1 else skills2)
         heal = check_heal(attacker, atk_stats, hp_dict, events)
 
         if defender == title1:
