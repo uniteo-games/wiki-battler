@@ -82,9 +82,10 @@ def battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events, speci
         if random.randint(1, 100) <= def_stats["防御力"]:
             events.append(f"🛡 {defender} は完全防御に成功！ノーダメージ！")
             return 0
-    elif random.randint(1, 100) <= def_stats["防御力"]:
-        base_damage = base_damage // 2
-        events.append(f"🛡 {defender} の防御力でダメージ半減！")
+    elif random.randint(1, 100) <= def_stats["防御力"]/2:
+        reduction_rate = random.uniform(0.2, 0.5)  # 20%〜50%に減少
+        base_damage = base_damage * reduction_rate
+        events.append(f"🛡 {defender} の防御力でダメージ減少！")
 
     hp_dict[defender] = max(0, hp_dict[defender] - base_damage)
     events.append(f"{attacker} が {defender} に {base_damage} ダメージ！")
