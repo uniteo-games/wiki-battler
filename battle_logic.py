@@ -21,37 +21,38 @@ def generate_stats(text, page=None):
     return stats
 
 # バトル1ターンの処理
-def battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, log_lines):
-    base_damage = max(10, atk_stats['攻撃力'] * 2 - def_stats['防御力'])
+def battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events):
+    # 必殺技チャンス
+    if "必殺技候補" in atk_stats and atk_stats["必殺技候補"]:
+        if random.randint(1, 20) == 1:  # 出現率 1/20
+            technique = random.choice(atk_stats["必殺技候補"])
+            success_chance = min(70, (atk_stats["素早さ"] + atk_stats["読みの力"]) // 2)
+            if random.randint(1, 100) <= success_chance:
+                damage = int(atk_stats["攻撃力"] * 2.5)
+                hp_dict[defender] = max(0, hp_dict[defender] - damage)
+                events.append(f"{attacker}の必殺技『{technique}』がヒット！ 💥 {defender} に {damage} ダメージ！")
+                return damage
+            else:
+                events.append(f"{attacker}の必殺技『{technique}』は外れた…")
+                return 0
 
-    # イベント発生処理
-    event_log = ""
-    damage = base_damage
+    # 通常攻撃処理
+    if random.randint(1, 100) <= def_stats["素早さ"] // 2:
+        events.append(f"💨 {defender} は素早さで攻撃を回避！")
+        return 0
 
-    # 1/8の確率で完全防御チャレンジ
-    if random.randint(1, 8) == 1 and random.random() < def_stats['読みの力'] / 300:
-        damage = 0
-        event_log += f"🧠 {defender} は読みの力で攻撃を無効化！\n"
-    # それ以外の回避 or 軽減 or 増加
-    elif random.random() < def_stats['素早さ'] / 400:
-        damage = 0
-        event_log += f"💨 {defender} は素早さで攻撃を回避！\n"
-    else:
-        if random.random() < def_stats['防御力'] / 400:
-            damage = damage // 2
-            event_log += f"🛡 {defender} の防御力でダメージ半減！\n"
-        if random.randint(1, 10) == 1 and random.random() < atk_stats['人気度'] / 300:
-            damage = int(damage * 1.5)
-            event_log += f"🔥 {attacker} の人気度で観客が応援！ダメージ増加！\n"
+    base_damage = atk_stats["攻撃力"]
+    if random.randint(1, 8) == 1:  # 1/8 の確率で完全防御
+        if random.randint(1, 100) <= def_stats["防御力"]:
+            events.append(f"🛡 {defender} は完全防御に成功！ノーダメージ！")
+            return 0
+    elif random.randint(1, 100) <= def_stats["防御力"]:
+        base_damage = base_damage // 2
+        events.append(f"🛡 {defender} の防御力でダメージ半減！")
 
-    hp_dict[defender] = max(0, hp_dict[defender] - damage)
-
-    log_lines.insert(0, f"{attacker} が {defender} に {damage} ダメージ！")
-    if event_log:
-        for line in reversed(event_log.strip().split('\n')):
-            log_lines.insert(1, line)
-
-    return damage
+    hp_dict[defender] = max(0, hp_dict[defender] - base_damage)
+    events.append(f"{attacker} が {defender} に {base_damage} ダメージ！")
+    return base_damage
 
 # 回復イベント
 def check_heal(name, stats, hp_dict, log_lines):
