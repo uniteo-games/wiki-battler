@@ -126,21 +126,30 @@ def get_processed_image(title, lang):
     return create_placeholder_image(fallback_char)
 
 def get_special_moves(title, lang):
-    """記事内のリンク付きテキストから先着15個を必殺技候補として取得"""
+    """
+    記事内のリンク付きテキストから10番目～25番目までを必殺技候補として取得。
+    候補が足りない場合は「気合」を追加。
+    """
     try:
         html_url = f"https://{lang}.wikipedia.org/wiki/{quote(title)}"
         res = requests.get(html_url)
         soup = BeautifulSoup(res.text, "html.parser")
-        special_moves = []
+        all_links = []
+
         for a in soup.find_all("a", href=True):
             if a.text.strip() and not a["href"].startswith("#") and ":" not in a["href"]:
-                special_moves.append(a.text.strip())
-            if len(special_moves) >= 15:
-                break
+                all_links.append(a.text.strip())
+
+        # 10番目以降25番目以内をスライス
+        special_moves = all_links[9:25]  # 10番目～25番目（0-indexed）
+
+        if len(special_moves) < 1:
+            special_moves.append("気合")
+
         return special_moves
     except Exception as e:
         print("[必殺技候補の取得エラー]:", e)
-        return []
+        return ["気合"]
 
 def format_stats(stats):
     """体力を除いたステータスを整形"""
