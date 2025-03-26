@@ -124,4 +124,23 @@ def get_processed_image(title, lang):
     # 画像取得に失敗した場合はタイトルの最初の文字を画像に
     fallback_char = title[0] if title else "？"
     return create_placeholder_image(fallback_char)
+    
+def get_special_moves(title, lang):
+    """
+    記事内のリンク付きテキストから先着15個を必殺技候補として取得
+    """
+    try:
+        html_url = f"https://{lang}.wikipedia.org/wiki/{quote(title)}"
+        res = requests.get(html_url)
+        soup = BeautifulSoup(res.text, "html.parser")
+        special_moves = []
+        for a in soup.find_all("a", href=True):
+            if a.text.strip() and not a["href"].startswith("#") and ":" not in a["href"]:
+                special_moves.append(a.text.strip())
+            if len(special_moves) >= 15:
+                break
+        return special_moves
+    except Exception as e:
+        print("[必殺技候補の取得エラー]:", e)
+        return []
 
