@@ -22,7 +22,7 @@ def get_link_count(title, lang="ja"):
         return 0
 
 # ステータス生成（テキスト量・記号・リンク数などに応じて）
-def generate_stats(article_text: str, max_hp: int = 1000) -> dict:
+def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000) -> dict:
     text_length = len(article_text)
     word_count = len(article_text.split())
     link_count = get_link_count(title, lang)
@@ -33,7 +33,7 @@ def generate_stats(article_text: str, max_hp: int = 1000) -> dict:
     defense = min(100, max(5, 15 + int(link_density * 100)))
     speed = min(150, max(20, 100 - int(text_length ** 0.3)))
     intuition = min(100, max(10, 20 + int(link_density * 80)))
-    popularity = min(300, max(10, int(link_count * 1.5)))
+    popularity = min(300, max(10, int(link_count * 1.5)))  # リンク数に比例して人気度を上げる
 
     return {
         "攻撃力": attack,
@@ -43,6 +43,7 @@ def generate_stats(article_text: str, max_hp: int = 1000) -> dict:
         "人気度": popularity,
         "体力": base_hp
     }
+
 # バトル1ターンの処理
 def battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events, special_moves):
     # 必殺技チャンス
