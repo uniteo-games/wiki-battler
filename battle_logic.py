@@ -1,6 +1,8 @@
 import random
 import time
 from wiki_utils import red_flash_image, darken_and_grayscale
+import math
+
 
 # ステータス生成（テキスト量・記号・リンク数などに応じて）
 def generate_stats(article_text: str, max_hp: int = 1000) -> dict:
