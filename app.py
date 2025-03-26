@@ -5,7 +5,7 @@ from battle_logic import *
 import time
 from PIL import Image
 import random
-
+import streamlit.components.v1 as components  # ←これを追加！
 st.set_page_config(page_title="Wikipediaバトラー", layout="wide")
 st.title("⚔️ Wikipedia バトラー")
 # 翻訳ボタンを表示（Google Translate）
