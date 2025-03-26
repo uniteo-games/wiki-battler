@@ -72,7 +72,8 @@ def battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events, speci
             return 0
 
     # 通常攻撃処理
-    if random.randint(1, 100) <= def_stats["素早さ"] // 2:
+    dodge_chance = (def_stats["素早さ"] ** 1.2) / 10  # 成長はやや遅め
+    if random.randint(1, 100) <= min(50, dodge_chance):  # 最大50%に制限
         events.append(f"💨 {defender} は素早さで攻撃を回避！")
         return 0
 
