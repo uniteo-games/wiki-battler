@@ -24,7 +24,8 @@ def get_link_count(title, lang="ja"):
 # ステータス生成（テキスト量・記号・リンク数などに応じて）
 def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000) -> dict:
     text_length = len(article_text)
-    word_count = len(article_text)
+    word_count = article_text.count("。") + article_text.count("、")
+
     link_count = get_link_count(title, lang)
     link_density = link_count / word_count if word_count else 0
 
