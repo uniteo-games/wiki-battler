@@ -63,7 +63,7 @@ def battle_turn(attacker, defender, atk_stats, def_stats, hp_dict, events, speci
         technique = random.choice(special_moves)
         success_chance = min(90, (atk_stats["素早さ"] + atk_stats["読みの力"]) // 2)
         if random.randint(1, 100) <= success_chance:
-            damage = int(atk_stats["攻撃力"] * 2.5)
+            damage = int(atk_stats["攻撃力"] * 1.7)
             hp_dict[defender] = max(0, hp_dict[defender] - damage)
             events.append(f"{attacker}の必殺技『{technique}』がヒット！ 💥 {defender} に {damage} ダメージ！")
             return damage
