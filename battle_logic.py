@@ -2,13 +2,30 @@ import random
 import time
 from wiki_utils import red_flash_image, darken_and_grayscale
 import math
+from bs4 import BeautifulSoup
+import requests
+from urllib.parse import quote
 
+def get_link_count(title, lang="ja"):
+    """
+    Wikipediaの記事本文に含まれるリンク数を返す
+    """
+    try:
+        url = f"https://{lang}.wikipedia.org/wiki/{quote(title)}"
+        res = requests.get(url)
+        soup = BeautifulSoup(res.text, "html.parser")
+        body = soup.find("div", {"id": "bodyContent"})  # 本文エリアに限定
+        links = body.find_all("a", href=True) if body else []
+        return len(links)
+    except Exception as e:
+        print("[リンク数取得エラー]:", e)
+        return 0
 
 # ステータス生成（テキスト量・記号・リンク数などに応じて）
 def generate_stats(article_text: str, max_hp: int = 1000) -> dict:
     text_length = len(article_text)
     word_count = len(article_text.split())
-    link_count = article_text.count("[[")  # ※後で正確なリンク数に置き換え可
+    link_count = get_link_count(title, lang)
     link_density = link_count / word_count if word_count else 0
 
     base_hp = min(max_hp, 500 + int(math.sqrt(text_length)) // 2)
