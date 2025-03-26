@@ -9,21 +9,25 @@ import streamlit.components.v1 as components  # ←これを追加！
 st.set_page_config(page_title="Wikipediaバトラー", layout="wide")
 st.title("⚔️ Wikipedia バトラー")
 # 翻訳ボタンを表示（Google Translate）
-components.html(
-    """
-    <div id="google_translate_element"></div>
-    <script type="text/javascript">
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-          {pageLanguage: 'ja', includedLanguages: 'en,ja', layout: google.translate.TranslateElement.InlineLayout.SIMPLE},
-          'google_translate_element'
-        );
-      }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    """,
-    height=50
-)
+# ページ一番上で一回だけ描画されるようにする
+if 'translation_initialized' not in st.session_state:
+    st.session_state['translation_initialized'] = True
+    components.html(
+        """
+        <div id="google_translate_element"></div>
+        <script type="text/javascript">
+          function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+              {pageLanguage: 'ja', includedLanguages: 'en,ja', layout: google.translate.TranslateElement.InlineLayout.SIMPLE},
+              'google_translate_element'
+            );
+          }
+        </script>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        """,
+        height=50
+    )
+
 col_input1, col_input2 = st.columns(2)
 with col_input1:
     url1 = st.text_input("Wikipedia URL 1")
