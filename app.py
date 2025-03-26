@@ -52,8 +52,8 @@ if st.button("バトル開始！") and url1 and url2:
     stats1 = generate_stats(text1)
     stats2 = generate_stats(text2)
 
-    skills1 = extract_skills(text1)
-    skills2 = extract_skills(text2)
+    skills1 = get_special_moves(title1, lang1)
+    skills2 = get_special_moves(title2, lang2)
 
     image_url1 = get_first_image(title1, lang1)
     image_url2 = get_first_image(title2, lang2)
