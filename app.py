@@ -122,15 +122,13 @@ if st.button("バトル開始！") and url1 and url2:
             log_lines.insert(0, f"{turn_counter}: {event}")
 
         turn_counter += 1
-        log_container.text_area("戦闘ログ", height=400, value="
-".join(log_lines))
+        log_container.text_area("戦闘ログ", height=400, value="\n".join(log_lines))
         time.sleep(0.8)
 
     winner = title1 if hp_dict[title1] > 0 else title2
     loser = title2 if winner == title1 else title1
     log_lines.insert(0, f"{turn_counter}: 🏆 勝者：{winner}！！")
-    log_container.text_area("戦闘ログ", height=400, value="
-".join(log_lines))
+    log_container.text_area("戦闘ログ", height=400, value="\n".join(log_lines))
 
     if winner == title1:
         img_display1.image(add_yellow_border(img1_orig), width=200)
