@@ -156,12 +156,12 @@ if st.button("バトル開始！") and url1 and url2:
             stats1["体力"] = hp_dict[title1]
             img_display1.image(process_image_for_hit(img1_orig), width=200)
             time.sleep(0.2)
-            img_display1.image(img1_orig, width=200)
+            img_display1.image(add_colored_border(img1_orig, stats1["体力"]), width=200)
         else:
             stats2["体力"] = hp_dict[title2]
             img_display2.image(process_image_for_hit(img2_orig), width=200)
             time.sleep(0.2)
-            img_display2.image(img2_orig, width=200)
+            img_display2.image(add_colored_border(img2_orig, stats2["体力"]), width=200)
 
         update_stats()
 
