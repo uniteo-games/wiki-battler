@@ -158,3 +158,18 @@ def get_special_moves(title, lang):
 def format_stats(stats):
     """体力を除いたステータスを整形"""
     return "\n".join([f"{k}: {v}" for k, v in stats.items() if k != "体力"])
+
+def add_dynamic_border(img, hp_ratio, border_size=10):
+    """
+    枠色をHP割合に応じて青→赤に変化させる
+    """
+    # 青（健全）から赤（瀕死）へ補間
+    r = int((1 - hp_ratio) * 255)
+    g = 0
+    b = int(hp_ratio * 255)
+    border_color = (r, g, b)
+
+    w, h = img.size
+    bordered = Image.new("RGB", (w + 2 * border_size, h + 2 * border_size), border_color)
+    bordered.paste(img, (border_size, border_size))
+    return bordered
