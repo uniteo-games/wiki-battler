@@ -10,6 +10,19 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="Wiki大戦", layout="wide")
 st.title("⚔️ Wiki大戦")
 
+def add_colored_border(img, current_hp, max_hp=1000, border_size=10):
+    # 青（初期）から赤（瀕死）へのグラデーション
+    ratio = max(0, min(1, 1 - current_hp / max_hp))  # 0（青）～1（赤）
+    red = int(255 * ratio)
+    blue = int(255 * (1 - ratio))
+    color = (red, 0, blue)
+    
+    w, h = img.size
+    bordered = Image.new("RGB", (w + 2 * border_size, h + 2 * border_size), color)
+    bordered.paste(img, (border_size, border_size))
+    return bordered
+
+
 def search_wikipedia_titles(query, lang="ja"):
     """キーワードからWikipediaの記事候補を返す"""
     url = f"https://{lang}.wikipedia.org/w/api.php"
@@ -94,7 +107,7 @@ if st.button("バトル開始！") and url1 and url2:
 
     with col1:
         img_display1 = st.empty()
-        img_display1.image(img1, width=200)
+        img_display1.image(add_colored_border(img1, stats1["体力"]), width=200)
         st.markdown(f"### {title1}")
         hp_display1 = st.empty()
         hp_display1.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
@@ -105,7 +118,7 @@ if st.button("バトル開始！") and url1 and url2:
 
     with col2:
         img_display2 = st.empty()
-        img_display2.image(img2, width=200)
+        img_display2.image(add_colored_border(img2, stats2["体力"]), width=200)
         st.markdown(f"### {title2}")
         hp_display2 = st.empty()
         hp_display2.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
@@ -143,12 +156,12 @@ if st.button("バトル開始！") and url1 and url2:
             stats1["体力"] = hp_dict[title1]
             img_display1.image(process_image_for_hit(img1_orig), width=200)
             time.sleep(0.2)
-            img_display1.image(img1_orig, width=200)
+            img_display1.image(add_colored_border(img1_orig, stats1["体力"]), width=200)
         else:
             stats2["体力"] = hp_dict[title2]
             img_display2.image(process_image_for_hit(img2_orig), width=200)
             time.sleep(0.2)
-            img_display2.image(img2_orig, width=200)
+            img_display2.image(add_colored_border(img2_orig, stats2["体力"]), width=200)
 
         update_stats()
 
