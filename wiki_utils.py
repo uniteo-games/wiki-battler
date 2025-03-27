@@ -131,29 +131,35 @@ def get_processed_image(title, lang):
 
 def get_special_moves(title, lang):
     """
-    記事内のリンク付きテキストから10番目～25番目までを必殺技候補として取得。
-    候補が足りない場合は「気合」を追加。
+    記事内のリンク付きテキストから1番目～10番目までを必殺技候補として取得。
+    mw-content-text 内のリンクのみを対象にする。
     """
     try:
         html_url = f"https://{lang}.wikipedia.org/wiki/{quote(title)}"
         res = requests.get(html_url)
         soup = BeautifulSoup(res.text, "html.parser")
-        all_links = []
 
-        for a in soup.find_all("a", href=True):
+        content_div = soup.select_one("#mw-content-text")
+        if not content_div:
+            print("[mw-content-text が見つかりません]")
+            return ["気合"]
+
+        all_links = []
+        for a in content_div.find_all("a", href=True):
             if a.text.strip() and not a["href"].startswith("#") and ":" not in a["href"]:
                 all_links.append(a.text.strip())
 
-        # 10番目以降25番目以内をスライス
-        special_moves = all_links[9:25]  # 10番目～25番目（0-indexed）
+        # 10番目～25番目（0-indexed でスライス）
+        special_moves = all_links[1:25]
 
-        if len(special_moves) < 1:
+        if not special_moves:
             special_moves.append("気合")
 
         return special_moves
     except Exception as e:
         print("[必殺技候補の取得エラー]:", e)
         return ["気合"]
+
 
 def format_stats(stats):
     """体力を除いたステータスを整形"""
