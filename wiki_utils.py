@@ -150,7 +150,7 @@ def get_special_moves(title, lang):
                 all_links.append(a.text.strip())
 
         # 10番目～25番目（0-indexed でスライス）
-        special_moves = all_links[1:25]
+        special_moves = all_links[2:25]
 
         if not special_moves:
             special_moves.append("気合")

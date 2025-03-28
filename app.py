@@ -43,10 +43,10 @@ col_input1, col_input2 = st.columns(2)
 with col_input1:
     input_type1 = st.radio("入力方法 1", ["記事名から選ぶ", "URLを直接入力"])
     if input_type1 == "記事名から選ぶ":
-        query1 = st.text_input("キーワードを入力（例：ピラミッド）", key="query1")
+        query1 = st.text_input("キーワードを入力して改行（例：ピラミッド）", key="query1")
         if query1:
             titles1, urls1 = search_wikipedia_titles(query1)
-            selected1 = st.selectbox("記事候補を選択", titles1) if titles1 else None
+            selected1 = st.selectbox("▼記事候補を選択", titles1) if titles1 else None
             url1 = urls1[titles1.index(selected1)] if selected1 else ""
         else:
             url1 = ""
@@ -56,10 +56,10 @@ with col_input1:
 with col_input2:
     input_type2 = st.radio("入力方法 2", ["記事名から選ぶ", "URLを直接入力"])
     if input_type2 == "記事名から選ぶ":
-        query2 = st.text_input("キーワードを入力（例：バッハ）", key="query2")
+        query2 = st.text_input("キーワードを入力して改行（例：バッハ）", key="query2")
         if query2:
             titles2, urls2 = search_wikipedia_titles(query2)
-            selected2 = st.selectbox("記事候補を選択", titles2) if titles2 else None
+            selected2 = st.selectbox("▼記事候補を選択", titles2) if titles2 else None
             url2 = urls2[titles2.index(selected2)] if selected2 else ""
         else:
             url2 = ""
