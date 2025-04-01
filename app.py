@@ -74,6 +74,18 @@ def add_yellow_border(img, border_size=10):
     return bordered
 
 if st.button("バトル開始！") and url1 and url2:
+    # 💬 試合準備中の点滅表示（中央・大きく）
+    prep_display = st.empty()
+    for _ in range(4):  # 約2秒点滅
+        prep_display.markdown(
+            "<div style='text-align:center; font-size:32px;'>⚔️ 選手入場中 ⚔️</div>",
+            unsafe_allow_html=True
+        )
+        time.sleep(0.4)
+        prep_display.markdown("")
+        time.sleep(0.3)
+    prep_display.empty()
+
     title1 = get_page_title(url1)
     title2 = get_page_title(url2)
     lang1 = extract_lang_from_url(url1)
