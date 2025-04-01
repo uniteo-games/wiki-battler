@@ -179,3 +179,20 @@ def add_dynamic_border(img, hp_ratio, border_size=10):
     bordered = Image.new("RGB", (w + 2 * border_size, h + 2 * border_size), border_color)
     bordered.paste(img, (border_size, border_size))
     return bordered
+
+def count_headings_and_images(title, lang="ja"):
+    """
+    記事内の見出し（h2, h3）と画像の数を返す
+    """
+    try:
+        url = f"https://{lang}.wikipedia.org/wiki/{quote(title)}"
+        res = requests.get(url)
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        headings = soup.find_all(["h2", "h3"])
+        images = soup.find_all("img")
+
+        return len(headings), len(images)
+    except Exception as e:
+        print("[見出し・画像数取得エラー]:", e)
+        return 0, 0

@@ -5,6 +5,7 @@ import math
 from bs4 import BeautifulSoup
 import requests
 from urllib.parse import quote
+from wiki_utils import count_headings_and_images
 
 def get_link_count(title, lang="ja"):
     """
@@ -26,10 +27,17 @@ def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 1000)
     text_length = len(article_text)
     word_count = article_text.count("。") + article_text.count("、")
 
+    # 🔽 追加要素の取得（見出し数・画像数）
+    heading_count, image_count = count_headings_and_images(title, lang)
+
     link_count = get_link_count(title, lang)
     link_density = link_count / word_count if word_count else 0
 
-    base_hp = min(max_hp, 500 + int(math.sqrt(text_length)) // 2)
+    # 🔽 ベース体力：500 + sqrt(text量) / 2 + heading数×5 + 画像数×7
+    base_hp = 500 + int(math.sqrt(text_length) / 2)
+    base_hp += heading_count * 5
+    base_hp += image_count * 7
+    base_hp = min(max_hp, base_hp)  # 上限制限
     attack = min(300, max(10, 30 + int(math.log(link_count + 1) * 25)))
     defense = min(200, max(10, int((link_density ** 0.5) * 80)))
     speed = min(150, max(20, 100 - int(text_length ** 0.3)))
