@@ -109,7 +109,9 @@ if st.button("バトル開始！") and url1 and url2:
     with col1:
         img_display1 = st.empty()
         img_display1.image(add_colored_border(img1, stats1["体力"]), width=200)
-        st.markdown(f"### {title1}")
+        #st.markdown(f"### {title1}")
+        title_display1 = st.empty()
+        title_display1.markdown(f"### {title1}")
         hp_display1 = st.empty()
         hp_display1.markdown(f"**体力: {stats1['体力']} / {max_hp1}**", unsafe_allow_html=True)
         stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
@@ -120,7 +122,9 @@ if st.button("バトル開始！") and url1 and url2:
     with col2:
         img_display2 = st.empty()
         img_display2.image(add_colored_border(img2, stats2["体力"]), width=200)
-        st.markdown(f"### {title2}")
+        #st.markdown(f"### {title2}")
+        title_display2 = st.empty()
+        title_display2.markdown(f"### {title2}")
         hp_display2 = st.empty()
         hp_display2.markdown(f"**体力: {stats2['体力']} / {max_hp2}**", unsafe_allow_html=True)
         stats_copy2 = {k: v for k, v in stats2.items() if k != "体力"}
@@ -181,12 +185,12 @@ if st.button("バトル開始！") and url1 and url2:
     if winner == title1:
         img_display1.image(add_yellow_border(img1_orig), width=200)
         img_display2.image(process_image_for_defeat(img2_orig), width=200)
-        title1 += " 🏅勝者"
+        title_display1.markdown(f"### {title1} 🏅勝者")
         #winner_text1.markdown("🏅 **勝者！**")
         #winner_text2.markdown("")
     else:
         img_display2.image(add_yellow_border(img2_orig), width=200)
         img_display1.image(process_image_for_defeat(img1_orig), width=200)
-        title2 += " 🏅勝者"
+        title_display2.markdown(f"### {title2} 🏅勝者")
         #winner_text2.markdown("🏅 **勝者！**")
         #winner_text1.markdown("")
