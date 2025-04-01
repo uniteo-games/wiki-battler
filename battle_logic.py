@@ -23,7 +23,7 @@ def get_link_count(title, lang="ja"):
         return 0
 
 # ステータス生成（テキスト量・記号・リンク数などに応じて）
-def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 3000) -> dict:
+def generate_stats(article_text: str, title: str, lang: str, max_hp: int = 10000) -> dict:
     text_length = len(article_text)
     word_count = article_text.count("。") + article_text.count("、")
 
