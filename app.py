@@ -73,12 +73,7 @@ def add_yellow_border(img, border_size=10):
     bordered.paste(img, (border_size, border_size))
     return bordered
 
-# 🔽 これを挿入（中央に見せるためのdiv）
-st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-start_clicked = st.button("バトル開始！")
-st.markdown("</div>", unsafe_allow_html=True)
-
-if start_clicked and url1 and url2:
+if st.button("バトル開始！") and url1 and url2:
     prep_display = st.empty()
     prep_display.markdown(
         "<div style='text-align:center; font-size:32px;'>⚔️ 選手入場中 ⚔️</div>",
@@ -197,12 +192,14 @@ if start_clicked and url1 and url2:
     if winner == title1:
         img_display1.image(add_yellow_border(img1_orig), width=200)
         img_display2.image(process_image_for_defeat(img2_orig), width=200)
-        title_display1.markdown(f"### {title1} 🏅勝者")
+        title_display1.markdown(f"### {title1} ❌勝者")
+        title_display2.markdown(f"### {title2} 🏆敗北")
         #winner_text1.markdown("🏅 **勝者！**")
         #winner_text2.markdown("")
     else:
         img_display2.image(add_yellow_border(img2_orig), width=200)
         img_display1.image(process_image_for_defeat(img1_orig), width=200)
-        title_display2.markdown(f"### {title2} 🏅勝者")
+        title_display1.markdown(f"### {title1} ❌敗北")
+        title_display2.markdown(f"### {title2} 🏆勝者")
         #winner_text2.markdown("🏅 **勝者！**")
         #winner_text1.markdown("")
