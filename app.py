@@ -181,10 +181,12 @@ if st.button("バトル開始！") and url1 and url2:
     if winner == title1:
         img_display1.image(add_yellow_border(img1_orig), width=200)
         img_display2.image(process_image_for_defeat(img2_orig), width=200)
-        winner_text1.markdown("🏅 **勝者！**")
-        winner_text2.markdown("")
+        title1 += " 🏅勝者"
+        #winner_text1.markdown("🏅 **勝者！**")
+        #winner_text2.markdown("")
     else:
         img_display2.image(add_yellow_border(img2_orig), width=200)
         img_display1.image(process_image_for_defeat(img1_orig), width=200)
-        winner_text2.markdown("🏅 **勝者！**")
-        winner_text1.markdown("")
+        title2 += " 🏅勝者"
+        #winner_text2.markdown("🏅 **勝者！**")
+        #winner_text1.markdown("")
