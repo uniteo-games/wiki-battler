@@ -73,7 +73,12 @@ def add_yellow_border(img, border_size=10):
     bordered.paste(img, (border_size, border_size))
     return bordered
 
-if st.button("バトル開始！") and url1 and url2:
+# 🔽 これを挿入（中央に見せるためのdiv）
+st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
+start_clicked = st.button("バトル開始！")
+st.markdown("</div>", unsafe_allow_html=True)
+
+if start_clicked and url1 and url2:
     prep_display = st.empty()
     prep_display.markdown(
         "<div style='text-align:center; font-size:32px;'>⚔️ 選手入場中 ⚔️</div>",
