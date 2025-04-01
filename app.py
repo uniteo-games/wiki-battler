@@ -102,7 +102,8 @@ if st.button("バトル開始！") and url1 and url2:
     log_lines = []
     turn_counter = 1
     winner = None
-
+    max_hp1 = stats1["体力"]
+    max_hp2 = stats2["体力"]
     col1, col2 = st.columns(2)
 
     with col1:
@@ -110,7 +111,7 @@ if st.button("バトル開始！") and url1 and url2:
         img_display1.image(add_colored_border(img1, stats1["体力"]), width=200)
         st.markdown(f"### {title1}")
         hp_display1 = st.empty()
-        hp_display1.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
+        hp_display1.markdown(f"**体力: {stats1['体力']} / {max_hp1}**", unsafe_allow_html=True)
         stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
         stat_box1 = st.empty()
         stat_box1.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy1.items()]))
@@ -121,7 +122,7 @@ if st.button("バトル開始！") and url1 and url2:
         img_display2.image(add_colored_border(img2, stats2["体力"]), width=200)
         st.markdown(f"### {title2}")
         hp_display2 = st.empty()
-        hp_display2.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
+        hp_display2.markdown(f"**体力: {stats2['体力']} / {max_hp2}**", unsafe_allow_html=True)
         stats_copy2 = {k: v for k, v in stats2.items() if k != "体力"}
         stat_box2 = st.empty()
         stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy2.items()]))
