@@ -76,7 +76,7 @@ def add_yellow_border(img, border_size=10):
 if st.button("バトル開始！") and url1 and url2:
     prep_display = st.empty()
     prep_display.markdown(
-        "<div style='text-align:center; font-size:32px;'>⚔️ 試合準備中...</div>",
+        "<div style='text-align:center; font-size:32px;'>⚔️ 選手入場中 ⚔️</div>",
         unsafe_allow_html=True
     )
 
