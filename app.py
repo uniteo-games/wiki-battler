@@ -131,8 +131,8 @@ if st.button("バトル開始！") and url1 and url2:
     def update_stats():
         stats_copy1 = {k: v for k, v in stats1.items() if k != "体力"}
         stats_copy2 = {k: v for k, v in stats2.items() if k != "体力"}
-        hp_display1.markdown(f"**体力: {stats1['体力']}**", unsafe_allow_html=True)
-        hp_display2.markdown(f"**体力: {stats2['体力']}**", unsafe_allow_html=True)
+        hp_display1.markdown(f"**体力: {stats1['体力']} / {max_hp1}**", unsafe_allow_html=True)
+        hp_display2.markdown(f"**体力: {stats2['体力']} / {max_hp2}**", unsafe_allow_html=True)
         stat_box1.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy1.items()]))
         stat_box2.markdown("\n".join([f"{k}: {v}" for k, v in stats_copy2.items()]))
 
